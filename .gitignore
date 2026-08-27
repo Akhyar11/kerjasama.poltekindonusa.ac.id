@@ -1,0 +1,43 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Root level dependencies (if any)
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Optional: explicitly ignore build/vendor folders in subdirectories 
+# (although backend and frontend should have their own .gitignore)
+backend/vendor/
+backend/node_modules/
+backend/public/build/
+backend/public/hot
+backend/storage/*.key
+backend/database/database.sqlite
+backend/database/database.sqlite-journal
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/

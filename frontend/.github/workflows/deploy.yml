@@ -1,0 +1,25 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - fe # Akan jalan setiap kali Anda push ke branch fe
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/hestiapanel/web/poltekindonusa.ac.id/public_html/frontend
+            git pull origin fe
+            npm install
+            npm run build
+            # Pastikan nama proses di PM2 sudah sesuai, atau gunakan id jika perlu
+            pm2 restart poltek-next || pm2 start npm --name "poltek-next" -- start
