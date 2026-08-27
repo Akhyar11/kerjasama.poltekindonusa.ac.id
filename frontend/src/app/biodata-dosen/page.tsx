@@ -1,4 +1,4 @@
-import { fetchAPI, fetchSippmAPI } from "@/lib/api";
+import { fetchAPI } from "@/lib/api";
 import DosenListClient, { Dosen, ProgdiGroup } from "@/components/DosenListClient";
 import { Metadata } from "next";
 
@@ -14,57 +14,9 @@ export default async function BiodataDosenPage() {
   let progdiGroups: ProgdiGroup[] = [];
 
   try {
-    // 1. Try fetching lecturers grouped by Program Studi directly from SIPPM API
-    const groupedRes = await fetchSippmAPI<any>("/api/biodata-dosen/grouped-by-progdi");
-    
-    if (groupedRes && groupedRes.status && Array.isArray(groupedRes.data)) {
-      const allDosens: Dosen[] = [];
-      
-      progdiGroups = groupedRes.data.map((group: any) => {
-        const mappedDosens: Dosen[] = (group.dosen || []).map((item: any) => ({
-          nidn: item.nidn,
-          nama: item.nama_lengkap || item.nama || "",
-          foto: item.foto_url || item.foto || null,
-          keahlian: item.jabatan_akademik || item.keahlian || null,
-          publikasi: null,
-          prodi_homebase: group.program_studi_nama,
-          prodi_id: group.program_studi_id,
-          email: item.email || null,
-        }));
-        
-        allDosens.push(...mappedDosens);
-
-        return {
-          id: group.program_studi_id,
-          nama: group.program_studi_nama,
-          total_dosen: group.total_dosen || mappedDosens.length,
-        };
-      });
-
-      dosens = allDosens;
-    } else {
-      // 2. Fallback to standard list if grouped response is unavailable
-      const listRes = await fetchSippmAPI<any>("/api/biodata-dosen?limit=100");
-      if (listRes && listRes.data && Array.isArray(listRes.data)) {
-        dosens = listRes.data.map((item: any) => ({
-          nidn: item.nidn,
-          nama: item.nama_lengkap || item.nama || "",
-          foto: item.foto_url || item.foto || null,
-          keahlian: item.jabatan_akademik || item.keahlian || null,
-          publikasi: null,
-          prodi_homebase: typeof item.program_studi === "object" ? item.program_studi?.nama : item.program_studi || null,
-          prodi_id: typeof item.program_studi === "object" ? item.program_studi?.id : null,
-          email: item.email || null,
-        }));
-      }
-    }
+    dosens = await fetchAPI<Dosen[]>("/biodata-dosens");
   } catch (error) {
-    console.error("Gagal memuat data dosen dari SIPPM, mencoba fallback ke API lokal...", error);
-    try {
-      dosens = await fetchAPI<Dosen[]>("/biodata-dosens");
-    } catch (fallbackError) {
-      console.error("Gagal memuat data dosen", fallbackError);
-    }
+    console.error("Gagal memuat data dosen dari API lokal", error);
   }
 
   return (
