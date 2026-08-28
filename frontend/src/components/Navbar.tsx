@@ -67,13 +67,30 @@ async function getNavbarData(): Promise<{ menuItems: MenuItem[]; settings: Setti
     { id: 7, menu_id: 1, parent_id: null, title: "Kontak", url: "/kontak", order: 7, children: [] },
   ];
 
+  let menuItems = staticMenuItems;
+  let settingsData = {} as Settings;
+
   try {
-    const settings = await fetchAPI<Settings>("/settings");
-    return { menuItems: staticMenuItems, settings: settings ?? {} };
+    const [settingsRes, menusRes] = await Promise.allSettled([
+      fetchAPI<Settings>("/settings"),
+      fetchAPI<any[]>("/menus")
+    ]);
+
+    if (settingsRes.status === 'fulfilled' && settingsRes.value) {
+      settingsData = settingsRes.value;
+    }
+
+    if (menusRes.status === 'fulfilled' && menusRes.value && menusRes.value.length > 0) {
+      const firstMenu = menusRes.value[0];
+      if (firstMenu.items && firstMenu.items.length > 0) {
+        menuItems = firstMenu.items;
+      }
+    }
   } catch (error: any) {
     console.warn("Failed to load navbar data: " + (error.message || error));
-    return { menuItems: staticMenuItems, settings: {} as Settings };
   }
+
+  return { menuItems, settings: settingsData };
 }
 
 export default async function Navbar() {
