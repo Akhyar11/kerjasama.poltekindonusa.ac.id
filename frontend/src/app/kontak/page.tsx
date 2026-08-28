@@ -2,6 +2,8 @@ import { fetchAPI } from "@/lib/api";
 import { Settings } from "@/lib/types";
 import Reveal from "@/components/Reveal";
 import { Metadata } from "next";
+import HeroSection from "@/components/HeroSection";
+import { HeroSlider } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Kontak | Politeknik Indonusa Surakarta",
@@ -17,8 +19,19 @@ async function getSettings(): Promise<Settings> {
   }
 }
 
+async function getHeroSliders(): Promise<HeroSlider[]> {
+  try {
+    return await fetchAPI<HeroSlider[]>("/hero-sliders");
+  } catch {
+    return [];
+  }
+}
+
 export default async function KontakPage() {
-  const settings = await getSettings();
+  const [settings, sliders] = await Promise.all([
+    getSettings(),
+    getHeroSliders(),
+  ]);
 
   const email = settings.contact_email || "info@poltekindonusa.ac.id";
   const phone = settings.contact_phone || "(0271) 728888"; // default Indonusa
@@ -37,46 +50,7 @@ export default async function KontakPage() {
       <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: "40%", height: "40%", background: "radial-gradient(circle, rgba(240,165,0,0.05) 0%, transparent 70%)", filter: "blur(60px)", zIndex: 0, pointerEvents: "none" }} />
 
       {/* Hero Header */}
-      <section style={{ 
-        position: "relative",
-        padding: "5rem 1.5rem 2.5rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        zIndex: 1
-      }}>
-        <Reveal>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", background: "rgba(0,162,232,0.1)", border: "1px solid rgba(0,162,232,0.2)", borderRadius: "20px", marginBottom: "1rem" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00a2e8", boxShadow: "0 0 8px #00a2e8" }}></span>
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#00a2e8", letterSpacing: "1px", textTransform: "uppercase" }}>Layanan & Bantuan</span>
-          </div>
-          <h1 style={{ 
-            fontSize: "clamp(2rem, 4vw, 3rem)", 
-            fontWeight: 800, 
-            lineHeight: 1.1, 
-            marginBottom: "1rem",
-            color: "var(--foreground)",
-            letterSpacing: "-0.5px"
-          }}>
-            Hubungi <span style={{ 
-              background: "linear-gradient(135deg, #00a2e8 0%, #0077b6 100%)", 
-              WebkitBackgroundClip: "text", 
-              WebkitTextFillColor: "transparent" 
-            }}>Kami</span>
-          </h1>
-          <p style={{ 
-            fontSize: "clamp(1rem, 2vw, 1.1rem)", 
-            color: "var(--muted-foreground)", 
-            maxWidth: "600px", 
-            margin: "0 auto",
-            lineHeight: 1.6
-          }}>
-            Silakan hubungi kami untuk informasi lebih lanjut mengenai pendaftaran, kerja sama industri, ataupun layanan kampus lainnya.
-          </p>
-        </Reveal>
-      </section>
+      <HeroSection sliders={sliders} />
 
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1.5rem", position: "relative", zIndex: 2 }}>
         <style>{`

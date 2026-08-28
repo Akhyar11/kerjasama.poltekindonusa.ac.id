@@ -3,6 +3,8 @@ import { fetchAPI } from "@/lib/api";
 import { Page as PageType } from "@/lib/types";
 import Reveal from "@/components/Reveal";
 import GalleryGrid from "@/components/GalleryGrid";
+import HeroSection from "@/components/HeroSection";
+import { HeroSlider } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Gallery | Politeknik Indonusa Surakarta",
@@ -17,8 +19,19 @@ async function getGalleryPage(): Promise<PageType | null> {
   }
 }
 
+async function getHeroSliders(): Promise<HeroSlider[]> {
+  try {
+    return await fetchAPI<HeroSlider[]>("/hero-sliders");
+  } catch {
+    return [];
+  }
+}
+
 export default async function GalleryPage() {
-  const galleryPage = await getGalleryPage();
+  const [galleryPage, sliders] = await Promise.all([
+    getGalleryPage(),
+    getHeroSliders(),
+  ]);
   
   // Ambil data media dari halaman (jika ada), jika tidak ada berikan array kosong
   const mediaItems = galleryPage?.media || [];
@@ -31,46 +44,7 @@ export default async function GalleryPage() {
       <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: "40%", height: "40%", background: "radial-gradient(circle, rgba(240,165,0,0.08) 0%, transparent 70%)", filter: "blur(60px)", zIndex: 0, pointerEvents: "none" }} />
 
       {/* Hero Header */}
-      <section style={{ 
-        position: "relative",
-        padding: "5rem 1.5rem 3.5rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        zIndex: 1
-      }}>
-        <Reveal>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", background: "rgba(240,165,0,0.1)", border: "1px solid rgba(240,165,0,0.2)", borderRadius: "20px", marginBottom: "1rem" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f0a500", boxShadow: "0 0 8px #f0a500" }}></span>
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#f0a500", letterSpacing: "1px", textTransform: "uppercase" }}>Dokumentasi Visual</span>
-          </div>
-          <h1 style={{ 
-            fontSize: "clamp(2rem, 4vw, 3rem)", 
-            fontWeight: 800, 
-            lineHeight: 1.1, 
-            marginBottom: "1rem",
-            color: "var(--foreground)",
-            letterSpacing: "-0.5px"
-          }}>
-            Gallery & <span style={{ 
-              background: "linear-gradient(135deg, #00a2e8 0%, #0077b6 100%)", 
-              WebkitBackgroundClip: "text", 
-              WebkitTextFillColor: "transparent" 
-            }}>Prestasi</span>
-          </h1>
-          <p style={{ 
-            fontSize: "clamp(1rem, 2vw, 1.1rem)", 
-            color: "var(--muted-foreground)", 
-            maxWidth: "600px", 
-            margin: "0 auto",
-            lineHeight: 1.6
-          }}>
-            Kumpulan momen penting, kegiatan mahasiswa, dan berbagai pencapaian Politeknik Indonusa Surakarta.
-          </p>
-        </Reveal>
-      </section>
+      <HeroSection sliders={sliders} />
 
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1.5rem", position: "relative", zIndex: 2 }}>
         {!galleryPage ? (

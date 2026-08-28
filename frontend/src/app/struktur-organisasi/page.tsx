@@ -2,6 +2,8 @@ import { fetchAPI } from "@/lib/api";
 import { Page as PageType } from "@/lib/types";
 import Reveal from "@/components/Reveal";
 import Image from "next/image";
+import HeroSection from "@/components/HeroSection";
+import { HeroSlider } from "@/lib/types";
 
 export const metadata = {
   title: "Struktur Organisasi - Politeknik Indonusa Surakarta",
@@ -16,8 +18,19 @@ async function getPageData(slug: string): Promise<PageType | null> {
   }
 }
 
+async function getHeroSliders(): Promise<HeroSlider[]> {
+  try {
+    return await fetchAPI<HeroSlider[]>("/hero-sliders");
+  } catch {
+    return [];
+  }
+}
+
 export default async function StrukturOrganisasiPage() {
-  const strukturPage = await getPageData("struktur-organisasi");
+  const [strukturPage, sliders] = await Promise.all([
+    getPageData("struktur-organisasi"),
+    getHeroSliders(),
+  ]);
 
   return (
     <div style={{ position: "relative", overflow: "hidden", paddingBottom: "5rem", background: "var(--background)", minHeight: "100vh" }}>
@@ -27,46 +40,7 @@ export default async function StrukturOrganisasiPage() {
       <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: "40%", height: "40%", background: "radial-gradient(circle, rgba(240,165,0,0.08) 0%, transparent 70%)", filter: "blur(60px)", zIndex: 0, pointerEvents: "none" }} />
 
       {/* Hero Header */}
-      <section style={{ 
-        position: "relative",
-        padding: "5rem 1.5rem 2.5rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        zIndex: 1
-      }}>
-        <Reveal>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", background: "rgba(0,162,232,0.1)", border: "1px solid rgba(0,162,232,0.2)", borderRadius: "20px", marginBottom: "1rem" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00a2e8", boxShadow: "0 0 8px #00a2e8" }}></span>
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#00a2e8", letterSpacing: "1px", textTransform: "uppercase" }}>Manajemen & Tata Kelola</span>
-          </div>
-          <h1 style={{ 
-            fontSize: "clamp(2rem, 4vw, 3rem)", 
-            fontWeight: 800, 
-            lineHeight: 1.1, 
-            marginBottom: "1rem",
-            color: "var(--foreground)",
-            letterSpacing: "-0.5px"
-          }}>
-            Struktur <span style={{ 
-              background: "linear-gradient(135deg, #00a2e8 0%, #0077b6 100%)", 
-              WebkitBackgroundClip: "text", 
-              WebkitTextFillColor: "transparent" 
-            }}>Organisasi</span>
-          </h1>
-          <p style={{ 
-            fontSize: "clamp(1rem, 2vw, 1.1rem)", 
-            color: "var(--muted-foreground)", 
-            maxWidth: "600px", 
-            margin: "0 auto",
-            lineHeight: 1.6
-          }}>
-            Sistem tata kelola dan bagan struktur organisasi Politeknik Indonusa Surakarta dalam mewujudkan pendidikan vokasi yang unggul.
-          </p>
-        </Reveal>
-      </section>
+      <HeroSection sliders={sliders} />
 
       <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem", position: "relative", zIndex: 2 }}>
         <Reveal delay={0.1}>

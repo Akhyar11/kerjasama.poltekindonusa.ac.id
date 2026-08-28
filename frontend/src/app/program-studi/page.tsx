@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import { fetchAPI } from "@/lib/api";
-import { StudyProgram } from "@/lib/types";
+import { StudyProgram, HeroSlider } from "@/lib/types";
 import ProgramListClient from "@/components/ProgramListClient";
+import HeroSection from "@/components/HeroSection";
 
 export const metadata: Metadata = {
   title: "Program Studi | Politeknik Indonusa Surakarta",
@@ -37,29 +38,24 @@ async function getPrograms(): Promise<StudyProgram[]> {
   }
 }
 
+async function getHeroSliders(): Promise<HeroSlider[]> {
+  try {
+    return await fetchAPI<HeroSlider[]>("/hero-sliders");
+  } catch {
+    return [];
+  }
+}
+
 export default async function ProgramStudiPage() {
-  const programs = await getPrograms();
+  const [programs, sliders] = await Promise.all([
+    getPrograms(),
+    getHeroSliders(),
+  ]);
   const list = programs.length > 0 ? programs : fallback;
 
   return (
     <div>
-      <section style={{ position: "relative", overflow: "hidden", padding: "4rem 1.5rem 5rem", background: "linear-gradient(135deg, #0a192f 0%, #112240 100%)", textAlign: "center" }}>
-        {/* Decorative Orbs */}
-        <div style={{ position: "absolute", top: "-50px", left: "10%", width: "200px", height: "200px", background: "rgba(240, 165, 0, 0.15)", filter: "blur(60px)", borderRadius: "50%" }} />
-        <div style={{ position: "absolute", bottom: "-50px", right: "10%", width: "250px", height: "250px", background: "rgba(30, 136, 229, 0.15)", filter: "blur(80px)", borderRadius: "50%" }} />
-        
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ display: "inline-block", padding: "6px 16px", borderRadius: "8px", background: "rgba(240,165,0,0.15)", color: "#ffc940", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: "1rem", border: "1px solid rgba(240,165,0,0.3)" }}>
-            Akademik
-          </div>
-          <h1 style={{ fontSize: "clamp(2.5rem, 5vw, 3.5rem)", fontWeight: 800, color: "white", marginBottom: "0.5rem", letterSpacing: "-1px" }}>
-            Program Studi
-          </h1>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto" }}>
-            Temukan 18 Program Studi unggulan terakreditasi yang siap mengantarkan Anda menuju karir masa depan yang gemilang.
-          </p>
-        </div>
-      </section>
+      <HeroSection sliders={sliders} />
 
       <section style={{ padding: "4rem 1.5rem", background: "var(--section-bg)", minHeight: "60vh" }}>
         <ProgramListClient programs={list} />

@@ -2,7 +2,8 @@ import { fetchAPI } from "@/lib/api";
 import { Page as PageType } from "@/lib/types";
 import Reveal from "@/components/Reveal";
 import Image from "next/image";
-
+import HeroSection from "@/components/HeroSection";
+import { HeroSlider } from "@/lib/types";
 export const metadata = {
   title: "Profil & Sejarah - Politeknik Indonusa Surakarta",
   description: "Visi, Misi, dan Sejarah Politeknik Indonusa Surakarta",
@@ -16,11 +17,20 @@ async function getPageData(slug: string): Promise<PageType | null> {
   }
 }
 
+async function getHeroSliders(): Promise<HeroSlider[]> {
+  try {
+    return await fetchAPI<HeroSlider[]>("/hero-sliders");
+  } catch {
+    return [];
+  }
+}
+
 export default async function ProfilPage() {
-  const [visi, misi, sejarah] = await Promise.all([
+  const [visi, misi, sejarah, sliders] = await Promise.all([
     getPageData("visi"),
     getPageData("misi"),
     getPageData("sejarah"),
+    getHeroSliders(),
   ]);
 
   return (
@@ -39,46 +49,7 @@ export default async function ProfilPage() {
       <div style={{ position: "absolute", bottom: "-10%", left: "10%", width: "60%", height: "40%", background: "radial-gradient(circle, rgba(26,58,92,0.08) 0%, transparent 70%)", filter: "blur(80px)", zIndex: 0, pointerEvents: "none" }} />
 
       {/* Hero Header */}
-      <section style={{ 
-        position: "relative",
-        padding: "5rem 1.5rem 3.5rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        zIndex: 1
-      }}>
-        <Reveal>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", background: "rgba(240,165,0,0.1)", border: "1px solid rgba(240,165,0,0.2)", borderRadius: "20px", marginBottom: "1rem" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f0a500", boxShadow: "0 0 8px #f0a500" }}></span>
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#f0a500", letterSpacing: "1px", textTransform: "uppercase" }}>Tentang Kami</span>
-          </div>
-          <h1 style={{ 
-            fontSize: "clamp(2rem, 4vw, 3rem)", 
-            fontWeight: 800, 
-            lineHeight: 1.1, 
-            marginBottom: "1rem",
-            color: "var(--foreground)",
-            letterSpacing: "-0.5px"
-          }}>
-            Profil <span style={{ 
-              background: "linear-gradient(135deg, #00a2e8 0%, #f0a500 100%)", 
-              WebkitBackgroundClip: "text", 
-              WebkitTextFillColor: "transparent" 
-            }}>Polinus</span>
-          </h1>
-          <p style={{ 
-            fontSize: "clamp(1rem, 2vw, 1.1rem)", 
-            color: "var(--muted-foreground)", 
-            maxWidth: "600px", 
-            margin: "0 auto",
-            lineHeight: 1.6
-          }}>
-            Mengenal lebih dekat landasan cita-cita, tujuan utama, serta jejak perjalanan panjang Politeknik Indonusa Surakarta.
-          </p>
-        </Reveal>
-      </section>
+      <HeroSection sliders={sliders} />
 
       <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem", position: "relative", zIndex: 2 }}>
         

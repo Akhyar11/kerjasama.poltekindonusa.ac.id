@@ -12,9 +12,7 @@ use App\Models\Menu;
 use App\Models\Page;
 use App\Models\CampusSystem;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
 
 Route::get('/settings', [App\Http\Controllers\Api\SettingController::class, 'index']);
 Route::get('/hero-sliders', [App\Http\Controllers\Api\HeroSliderController::class, 'index']);
