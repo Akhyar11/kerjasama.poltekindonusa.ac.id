@@ -51,29 +51,28 @@ function buildMenuTree(items: MenuItem[]): MenuItem[] {
 }
 
 async function getNavbarData(): Promise<{ menuItems: MenuItem[]; settings: Settings }> {
+  const staticMenuItems: MenuItem[] = [
+    { id: 1, menu_id: 1, parent_id: null, title: "Home", url: "/", order: 1, children: [] },
+    { 
+      id: 2, menu_id: 1, parent_id: null, title: "Profil", url: null, order: 2, 
+      children: [
+        { id: 21, menu_id: 1, parent_id: 2, title: "Profil", url: "/profil", order: 1, children: [] },
+        { id: 22, menu_id: 1, parent_id: 2, title: "Struktur Organisasi", url: "/struktur-organisasi", order: 2, children: [] }
+      ] 
+    },
+    { id: 3, menu_id: 1, parent_id: null, title: "Berita", url: "/berita", order: 3, children: [] },
+    { id: 4, menu_id: 1, parent_id: null, title: "Mitra Kerjasama", url: "/mitra-kerjasama", order: 4, children: [] },
+
+    { id: 6, menu_id: 1, parent_id: null, title: "Gallery", url: "/gallery", order: 6, children: [] },
+    { id: 7, menu_id: 1, parent_id: null, title: "Kontak", url: "/kontak", order: 7, children: [] },
+  ];
+
   try {
     const settings = await fetchAPI<Settings>("/settings");
-
-    const staticMenuItems: MenuItem[] = [
-      { id: 1, menu_id: 1, parent_id: null, title: "Home", url: "/", order: 1, children: [] },
-      { 
-        id: 2, menu_id: 1, parent_id: null, title: "Profil", url: null, order: 2, 
-        children: [
-          { id: 21, menu_id: 1, parent_id: 2, title: "Profil", url: "/profil", order: 1, children: [] },
-          { id: 22, menu_id: 1, parent_id: 2, title: "Struktur Organisasi", url: "/struktur-organisasi", order: 2, children: [] }
-        ] 
-      },
-      { id: 3, menu_id: 1, parent_id: null, title: "Berita", url: "/berita", order: 3, children: [] },
-      { id: 4, menu_id: 1, parent_id: null, title: "Mitra Kerjasama", url: "/mitra-kerjasama", order: 4, children: [] },
-
-      { id: 6, menu_id: 1, parent_id: null, title: "Gallery", url: "/gallery", order: 6, children: [] },
-      { id: 7, menu_id: 1, parent_id: null, title: "Kontak", url: "/kontak", order: 7, children: [] },
-    ];
-    
     return { menuItems: staticMenuItems, settings: settings ?? {} };
   } catch (error: any) {
     console.warn("Failed to load navbar data: " + (error.message || error));
-    return { menuItems: [], settings: {} as Settings };
+    return { menuItems: staticMenuItems, settings: {} as Settings };
   }
 }
 
