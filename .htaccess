@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to sensitive files and folders
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package\.(json|lock)|tsconfig\.json) - [F,L,NC]
+
+    # Route backend endpoints & assets to backend/public/
+    RewriteCond %{REQUEST_URI} ^/(api|admin|livewire|filament|storage|js/filament|css/filament|fonts/filament|_debugbar|sanctum|up)(/.*)?$ [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/livewire- [NC]
+    RewriteRule ^(.*)$ backend/public/$1 [L,QSA]
+</IfModule>

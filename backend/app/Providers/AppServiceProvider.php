@@ -22,8 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.env') === 'production' || str_contains(config('app.url'), 'https://')) {
+        if (config('app.env') === 'production' || str_contains(config('app.url'), 'https://') || request()->header('x-forwarded-proto') === 'https' || (request()->header('cf-visitor') && str_contains(request()->header('cf-visitor'), 'https'))) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            request()->server->set('HTTPS', 'on');
+            request()->server->set('SERVER_PORT', 443);
+            request()->headers->set('X-Forwarded-Proto', 'https');
+            request()->headers->set('X-Forwarded-Port', 443);
         }
         \Illuminate\Support\Facades\Gate::before(function ($user, $ability, $models) {
             if ($user instanceof \App\Models\User) {
