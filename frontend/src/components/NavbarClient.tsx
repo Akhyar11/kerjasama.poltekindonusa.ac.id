@@ -303,7 +303,7 @@ export default function NavbarClient({ menuItems, settings }: NavbarClientProps)
             <img
               src={settings.site_logo.startsWith("http") ? settings.site_logo : getImageUrl(settings.site_logo)}
               alt="Logo"
-              style={{ height: "48px", width: "auto", objectFit: "contain" }}
+              style={{ height: "48px", width: "auto", objectFit: "contain", flexShrink: 0 }}
             />
           ) : (
             <div
