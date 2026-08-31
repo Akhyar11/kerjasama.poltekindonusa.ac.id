@@ -53,7 +53,7 @@ export default function BiodataDosenEditPage() {
     const storedNidn = localStorage.getItem("dosen_nidn");
     const storedNama = localStorage.getItem("dosen_nama");
 
-    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "https://backend-web.poltekindonusa.ac.id/api").replace("/api", "");
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace("/api", "");
 
     if (!token || !storedNidn) {
       window.location.href = `${backendUrl}/dosen/login`;
@@ -66,7 +66,7 @@ export default function BiodataDosenEditPage() {
     // Fetch existing biodata
     const fetchBiodata = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://backend-web.poltekindonusa.ac.id/api"}/biodata-dosens/${storedNidn}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "/api"}/biodata-dosens/${storedNidn}`);
         if (res.ok) {
           const data = await res.json();
           setFormData({
@@ -89,7 +89,7 @@ export default function BiodataDosenEditPage() {
     localStorage.removeItem("dosen_token");
     localStorage.removeItem("dosen_nidn");
     localStorage.removeItem("dosen_nama");
-    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "https://backend-web.poltekindonusa.ac.id/api").replace("/api", "");
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace("/api", "");
     window.location.href = `${backendUrl}/dosen/login`;
   };
 
@@ -103,7 +103,7 @@ export default function BiodataDosenEditPage() {
     setMessage({ type: "", text: "" });
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://backend-web.poltekindonusa.ac.id/api"}/biodata-dosens/${nidn}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "/api"}/biodata-dosens/${nidn}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

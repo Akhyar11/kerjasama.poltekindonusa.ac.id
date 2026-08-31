@@ -21,7 +21,7 @@ export default function VisitorTracker() {
 
     const apiBase =
       process.env.NEXT_PUBLIC_API_URL ||
-      "https://backend-web.poltekindonusa.ac.id/api";
+      "/api";
 
     // Jalankan asinkron tanpa memblokir render
     const track = async () => {

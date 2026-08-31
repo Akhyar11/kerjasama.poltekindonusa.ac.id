@@ -1,8 +1,8 @@
 const isServer = typeof window === 'undefined';
 // Gunakan INTERNAL_API_URL di server (build time) jika ada, untuk menghindari ETIMEDOUT (masalah NAT loopback)
 const API_BASE = isServer 
-  ? (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8001/api")
-  : (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8001/api");
+  ? (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "/api")
+  : (process.env.NEXT_PUBLIC_API_URL || "/api");
 
 export async function fetchAPI<T>(endpoint: string): Promise<T> {
   const controller = new AbortController();
@@ -30,7 +30,7 @@ export function getImageUrl(path: string | null): string {
   if (!path) return "/placeholder.jpg";
   if (path.startsWith("http")) return path;
   
-  const storageBase = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8001/storage";
+  const storageBase = process.env.NEXT_PUBLIC_STORAGE_URL || "/storage";
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   return `${storageBase}/${cleanPath}`;
 }
