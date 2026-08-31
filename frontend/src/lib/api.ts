@@ -22,9 +22,17 @@ export async function fetchAPI<T>(endpoint: string): Promise<T> {
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
   try {
+    const headers: HeadersInit = {};
+    
+    // Jika ada INTERNAL_API_HOST, paksa header Host agar Nginx tahu Virtual Host mana yang dituju
+    if (isServer && process.env.INTERNAL_API_HOST) {
+      headers['Host'] = process.env.INTERNAL_API_HOST;
+    }
+
     const res = await fetch(`${API_BASE}${endpoint}`, {
       next: { revalidate: 60 },
       signal: controller.signal,
+      headers: headers,
     });
     clearTimeout(timeoutId);
 
