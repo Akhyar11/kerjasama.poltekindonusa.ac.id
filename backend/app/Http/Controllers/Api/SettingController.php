@@ -12,9 +12,8 @@ class SettingController extends Controller
     {
         $settings = Setting::all()->mapWithKeys(function ($setting) {
             $value = $setting->value;
-            if ($setting->type === 'image' && $value) {
-                $value = url('storage/' . $value);
-            }
+            // Biarkan frontend yang menambahkan base url storage (lewat NEXT_PUBLIC_STORAGE_URL)
+            // agar tidak terjadi hardcode URL internal (seperti 192.168.x.x) di frontend
             return [$setting->key => $value];
         });
 
