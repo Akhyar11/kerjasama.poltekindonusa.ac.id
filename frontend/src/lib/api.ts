@@ -1,8 +1,21 @@
 const isServer = typeof window === 'undefined';
+
 // Gunakan INTERNAL_API_URL di server (build time) jika ada, untuk menghindari ETIMEDOUT (masalah NAT loopback)
-const API_BASE = isServer 
-  ? (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "/api")
-  : (process.env.NEXT_PUBLIC_API_URL || "/api");
+const getApiBase = () => {
+  if (isServer) {
+    if (process.env.INTERNAL_API_URL) return process.env.INTERNAL_API_URL;
+    if (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')) {
+      return process.env.NEXT_PUBLIC_API_URL;
+    }
+    // Jika tidak ada setting atau settingnya berupa relative path (misal "/api"), 
+    // server Next.js (Node) butuh absolute URL untuk fetch
+    return "http://127.0.0.1/api";
+  }
+  // Di client (browser), relative path sangat aman dan direkomendasikan
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
+};
+
+const API_BASE = getApiBase();
 
 export async function fetchAPI<T>(endpoint: string): Promise<T> {
   const controller = new AbortController();
